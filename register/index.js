@@ -7,7 +7,7 @@ module.exports = async function (context, req) {
     context.log.verbose('Registering a new device: ' + JSON.stringify(req.body));
 
     try {
-        const device = await registrationService.register(req.body); //TODO: validate the body
+        const device = await registrationService.register();
         context.res = {
             headers: {
                 'Content-Type': 'application/json'
