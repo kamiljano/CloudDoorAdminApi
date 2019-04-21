@@ -1,18 +1,18 @@
 'use strict';
 
-const registrationService = require('./services/registrationService');
 const errorResponseBuilder = require('../common/errors/errorResponseBuilder');
+const iotSearchService = require('./lib/botSearchService');
 
 module.exports = async function (context, req) {
-    context.log.verbose('Registering a new device');
+    context.log.verbose('List new devices');
 
     try {
-        const device = await registrationService.register();
+        const result = await iotSearchService.findConnectedBots();
         context.res = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: device
+            body: result
         };
     } catch (err) {
         context.log.error(err);

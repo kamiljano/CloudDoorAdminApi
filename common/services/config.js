@@ -11,6 +11,5 @@ const getEnv = param => {
 };
 
 module.exports = {
-    getIotRegistryReadWriteConnectionString: () => getEnv('IOT_REGISTRY_READ_WRITE_CONNECTION_STRING'),
-    getCosmosDbConnectionString: () => getEnv('COSMOS_DB_CONNECTION_STRING')
+    getIotRegistryReadWriteConnectionString: () => getEnv('IOT_REGISTRY_READ_WRITE_CONNECTION_STRING')
 };

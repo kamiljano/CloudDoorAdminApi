@@ -11,6 +11,10 @@
   "dependencies": {
     "azure-iothub": "^1.9.5",
     "azure-storage": "^2.10.2",
+    "lodash": "^4.17.11",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "azure-functions-core-tools": "^2.6.666"
   }
 }
