@@ -5,8 +5,9 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
+      "route": "bots",
       "methods": [
-        "get"
+        "put"
       ]
     },
     {

@@ -5,9 +5,8 @@ The application allows to register new IoT devices, perform basic queries on the
 
 # TODO
 
-* Figure out how to make the HTTP paths look legit... not like what I have now - "route": "products/{category:alpha}/{id:int?}"
 * Store the device creation date (might require parsing the IoT Hub event)
-* Create a resource template and make sure that the whole thing can be deployed with just one command
+* make sure that the functions are deployed along with the template
 * Figure out the authentication for everything except for the registration function
 * Create an endpoint for issuing the new commands
 * Add automatic client version updates
