@@ -65,3 +65,11 @@ Optional parameters for the command:
 
     * `--skuName` - IoT Hub's SKU name. By default it's 'F1' (free IoT Hub)
     * `--capacityUnits` - IoT Hub's capacity units. By default 1
+
+# Debug locally
+
+Once all resources are deployed, you can fetch the remote settings with `func azure functionapp fetch-app-settings CloudDoor`.
+This will pre-configure the `local.settings.json` with all the necessary data to hook your local instance to the remotely hosted IoT Hub and
+all other resources that are necessary for a smooth local run.
+
+Once you have your `local.settings.json` in place, run the local server with `func start`
