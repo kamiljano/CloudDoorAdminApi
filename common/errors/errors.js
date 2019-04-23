@@ -14,6 +14,12 @@ class InternalHttpError extends HttpError {
     }
 }
 
+class BadRequestHttpError extends HttpError {
+    constructor(message) {
+        super(400, {error: message});
+    }
+}
+
 class MisconfigurationError extends InternalHttpError {
 
     constructor(message) {
@@ -21,4 +27,4 @@ class MisconfigurationError extends InternalHttpError {
     }
 }
 
-module.exports = {HttpError, InternalHttpError, MisconfigurationError};
+module.exports = {HttpError, InternalHttpError, BadRequestHttpError, MisconfigurationError};
