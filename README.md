@@ -16,7 +16,9 @@ The application allows to register new IoT devices, perform basic queries on the
 
 ## Register
 
-    GET /api/register
+    PUT /api/bots
+
+    No Body
 
     Example output:
 
@@ -27,7 +29,7 @@ The application allows to register new IoT devices, perform basic queries on the
 
 ## Search for devices
 
-    GET /api/findBots
+    GET /api/bots
 
     Example output:
 
@@ -42,6 +44,53 @@ The application allows to register new IoT devices, perform basic queries on the
         }
     ]
 
+## Issue a command
+
+    POST /api/bots/:botId/command
+
+### List Drives
+
+    Request Body:
+
+    {
+        "type": "driveList"
+    }
+
+    Example Response:
+
+    {
+        "drives": [
+            {
+                "name": "C:\\"
+            }
+        ]
+    }
+
+### List Directories
+
+    Request Body:
+
+    {
+        "type": "dirList",
+        "payload": {
+            "path": "C:"
+        }
+    }
+
+    Example Response:
+
+    {
+        "files": [
+            {
+                "name": "data",
+                "type": "DIR"
+            },
+            {
+                "name": "postgresql_84.exe",
+                "type": "FILE"
+            }
+        ]
+    }
 
 # Install Dependencies
 
