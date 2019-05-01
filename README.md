@@ -3,6 +3,9 @@
 CloudDoor is a minimalistic serverless CnC application based on Azure Functions and Azure IoT Hub.
 The application allows to register new IoT devices, perform basic queries on them and issue remote operations.
 
+The following reporitory contains only the backend configuration and code.
+[The code of an example bot can be found here.](https://github.com/kamiljano/CloudDoorClient)
+
 # TODO
 
 * Store the device creation date (might require parsing the IoT Hub event)
@@ -105,18 +108,12 @@ npm install
 
 ## The hard, but detailed way
 
-1. Create a resource group - `az group create --name CloudDoorDevResourceGroup --location northeurope`
-2. Deploy the resources - `az group deployment create --resource-group CloudDoorDevResourceGroup --template-file "./azuredeploy.json"`.
-Optional parameters for the command:
-
-    IoT related:
-
-    * `--skuName` - IoT Hub's SKU name. By default it's 'F1' (free IoT Hub)
-    * `--capacityUnits` - IoT Hub's capacity units. By default 1
+1. Create a resource group - `az group create --name CloudDoorProdResourceGroup --location northeurope`
+2. Deploy the resources - `az group deployment create --resource-group CloudDoorProdResourceGroup --template-file "./azuredeploy.json"`
 
 # Debug locally
 
-Once all resources are deployed, you can fetch the remote settings with `func azure functionapp fetch-app-settings CloudDoor`.
+Once all resources are deployed, you can fetch the remote settings with `func azure functionapp fetch-app-settings CloudDoorDev`.
 This will pre-configure the `local.settings.json` with all the necessary data to hook your local instance to the remotely hosted IoT Hub and
 all other resources that are necessary for a smooth local run.
 

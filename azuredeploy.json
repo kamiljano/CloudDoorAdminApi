@@ -2,12 +2,23 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "iotHubName": {
+      "env": {
         "type": "string",
-        "minLength": 3,
-        "defaultValue": "CloudDoorDev",
+        "defaultValue": "Prod",
         "metadata": {
-          "description": "Specifies the name of the IoT Hub."
+          "description": "The environment you're deploying the application to. It will be used as a suffix to many of your resources"
+        }
+      },
+      "aadClientId": {
+        "type": "string",
+        "metadata": {
+          "description": "Client ID of the Azure Active Directory"
+        }
+      },
+      "aadTenant": {
+        "type": "string",
+        "metadata": {
+          "description": "Tenant ID of the Azure Active Directory"
         }
       },
       "location": {
@@ -40,14 +51,6 @@
           "description": "The name of the function app to create. Must be globally unique."
         }
       },
-      "hostingPlanName": {
-        "type": "string",
-        "maxLength": 24,
-        "defaultValue": "clouddoor",
-        "metadata": {
-          "description": "The name of the hosting plan"
-        }
-      },
       "iotRetentionTimeInDays": {
         "type": "int",
         "minValue": 1,
@@ -66,8 +69,10 @@
       }
     },
     "variables": {
-      "consumerGroupName": "[concat(parameters('iotHubName'), '/events/cg1')]",
-      "storageAccountName": "[toLower(parameters('functionAppName'))]",
+      "functionAppName": "[concat(parameters('functionAppName'), parameters('env'))]",
+      "consumerGroupName": "[concat(variables('functionAppName'), '/events/cg1')]",
+      "storageAccountName": "[toLower(variables('functionAppName'))]",
+      "hostingPlanName": "[toLower(variables('functionAppName'))]",
       "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
     },
     "resources": [
@@ -83,19 +88,19 @@
       },
       {
         "apiVersion": "2015-05-01",
-        "name": "[parameters('functionAppName')]",
+        "name": "[variables('functionAppName')]",
         "type": "Microsoft.Insights/components",
         "kind": "web",
         "location": "[resourceGroup().location]",
         "properties": {
             "Application_Type": "web",
-            "ApplicationId": "[parameters('functionAppName')]"
+            "ApplicationId": "[variables('functionAppName')]"
         }
       },
       {
         "type": "Microsoft.Web/serverfarms",
         "apiVersion": "2016-09-01",
-        "name": "[parameters('hostingPlanName')]",
+        "name": "[variables('hostingPlanName')]",
         "location": "[resourceGroup().location]",
         "sku": {
           "name": "Y1",
@@ -106,7 +111,7 @@
         },
         "kind": "functionapp",
         "properties": {
-            "name": "[parameters('hostingPlanName')]",
+            "name": "[variables('hostingPlanName')]",
             "perSiteScaling": false,
             "reserved": false,
             "targetWorkerCount": 0,
@@ -116,14 +121,31 @@
       {
         "apiVersion": "2015-08-01",
         "type": "Microsoft.Web/sites",
-        "name": "[parameters('functionAppName')]",
+        "name": "[variables('functionAppName')]",
         "location": "[resourceGroup().location]",
         "kind": "functionapp",
         "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-            "[resourceId('Microsoft.Insights/components', parameters('functionAppName'))]",
-            "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+            "[resourceId('Microsoft.Insights/components', variables('functionAppName'))]",
+            "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
         ],
+        "resources": [{
+          "name": "[concat(variables('functionAppName'), '/authsettings')]",
+          "apiVersion": "2016-08-01",
+          "type": "Microsoft.Web/sites/config",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "enabled": true,
+            "unauthenticatedClientAction": "RedirectToLoginPage",
+            "tokenStoreEnabled": true,
+            "defaultProvider": "AzureActiveDirectory",
+            "clientId": "[parameters('aadClientId')]",
+            "issuer": "[concat('https://sts.windows.net/', parameters('aadTenant'), '/')]"
+          }
+        }],
         "properties": {
           "siteConfig": {
             "appSettings": [
@@ -153,7 +175,7 @@
                 },
                 {
                   "name": "IOT_REGISTRY_READ_WRITE_CONNECTION_STRING",
-                  "value": "[concat('HostName=', reference(resourceId('Microsoft.Devices/IoTHubs', parameters('iotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).hostName, ';SharedAccessKeyName=iothubowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[0].primaryKey)]"
+                  "value": "[concat('HostName=', reference(resourceId('Microsoft.Devices/IoTHubs', variables('functionAppName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).hostName, ';SharedAccessKeyName=iothubowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', variables('functionAppName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[0].primaryKey)]"
                 }
             ]
           }
@@ -162,7 +184,7 @@
       {
         "type": "Microsoft.Devices/IotHubs",
         "apiVersion": "2018-04-01",
-        "name": "[parameters('iotHubName')]",
+        "name": "[variables('functionAppName')]",
         "location": "[parameters('location')]",
         "properties": {
           "eventHubEndpoints": {
@@ -202,13 +224,13 @@
         "apiVersion": "2018-04-01",
         "name": "[variables('consumerGroupName')]",
         "dependsOn": [
-          "[resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName'))]"
+          "[resourceId('Microsoft.Devices/IotHubs', variables('functionAppName'))]"
         ]
       }
     ],
     "outputs": {
       "iotHubKeys": {
-        "value": "[listKeys(resourceId('Microsoft.Devices/iotHubs', parameters('iotHubName')), '2018-04-01')]",
+        "value": "[listKeys(resourceId('Microsoft.Devices/iotHubs', variables('functionAppName')), '2018-04-01')]",
         "type": "object"
       }
     }
