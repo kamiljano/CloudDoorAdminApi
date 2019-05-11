@@ -106,10 +106,9 @@ npm install
 
 # Deploy
 
-## The hard, but detailed way
-
 1. Create a resource group - `az group create --name CloudDoorProdResourceGroup --location northeurope`
 2. Deploy the resources - `az group deployment create --resource-group CloudDoorProdResourceGroup --template-file "./azuredeploy.json"`
+3. Authentiation cannot be defined in the ARM template. This is why it has to be set up automatically based on [this video](https://www.youtube.com/watch?v=aMk4sieku_Y)
 
 # Debug locally
 
