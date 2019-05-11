@@ -59,8 +59,8 @@
     "variables": {
       "functionAppName": "[concat(parameters('functionAppName'), parameters('env'))]",
       "consumerGroupName": "[concat(variables('functionAppName'), '/events/cg1')]",
-      "storageAccountName": "[toLower(variables('functionAppName'))]",
       "hostingPlanName": "[toLower(variables('functionAppName'))]",
+      "storageAccountName": "[toLower(variables('functionAppName'))]",
       "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
     },
     "resources": [
@@ -74,6 +74,7 @@
           "name": "Standard_LRS"
         }
       },
+
       {
         "apiVersion": "2015-05-01",
         "name": "[variables('functionAppName')]",
@@ -183,7 +184,15 @@
               "lockDurationAsIso8601": "PT1M",
               "maxDeliveryCount": 10
             }
-          }
+          },
+          "storageEndpoints": {
+            "$default": {
+                "sasTtlAsIso8601": "PT1H",
+                "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]",
+                "containerName": "uploads"
+            }
+          },
+          "enableFileUploadNotifications": true
         },
         "sku": {
           "name": "[parameters('skuName')]",

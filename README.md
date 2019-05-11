@@ -95,6 +95,35 @@ The following reporitory contains only the backend configuration and code.
         ]
     }
 
+### Upload file
+
+    Request Body:
+
+    {
+        "type": "fileUpload",
+        "payload": {
+            "paths": [
+                "C:\\Users\\janoka\\Desktop\\exam.docx"	
+            ]
+        }
+    }
+
+    Example Response:
+
+    {
+        "uploads": [
+            {
+                "status": "UPLOADED",
+                "path": "C:\\Users\\janoka\\Desktop\\speach.docx",
+                "storage": {
+                    "path": "uploads/2a33cc05-8186-45e2-ae47-1325cf89d66d/C:/Users/janoka/Desktop/speach.docx"
+                }
+            }
+        ]
+    }
+
+Where `uploads.storage.path` represents the exact place in the Azure Storage account where the file is available.
+
 # Install Dependencies
 
 All dependencies can be installed with the simple command
@@ -106,8 +135,18 @@ npm install
 
 # Deploy
 
+## Production environemnt
+
 1. Create a resource group - `az group create --name CloudDoorProdResourceGroup --location northeurope`
 2. Deploy the resources - `az group deployment create --resource-group CloudDoorProdResourceGroup --template-file "./azuredeploy.json"`
+
+## Development environment
+
+1. Create a resource group - `az group create --name CloudDoorDevResourceGroup --location northeurope`
+2. Deploy the resources - ` az group deployment create --resource-group CloudDoorDevResourceGroup --template-file "./azuredeploy.json" --parameters @azuredeploy-devparameters.json`
+
+## Common
+
 3. Authentiation cannot be defined in the ARM template. This is why it has to be set up automatically based on [this video](https://www.youtube.com/watch?v=aMk4sieku_Y)
 
 # Debug locally
