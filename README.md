@@ -11,7 +11,6 @@ The following reporitory contains only the backend configuration and code.
 * Store the device creation date (might require parsing the IoT Hub event)
 * make sure that the functions are deployed along with the template
 * Figure out the authentication for everything except for the registration function
-* Create an endpoint for issuing the new commands
 * Add automatic client version updates
 * Make sure that the admin api of the IoT Hub can only be accessed from the cloud. Might need to put it into some vNet or something
 
