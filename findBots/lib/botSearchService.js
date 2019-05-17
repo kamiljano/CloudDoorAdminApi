@@ -12,10 +12,23 @@ class Bot {
         this.id = data.deviceId;
         this.os = _.get(data, 'properties.reported.os');
         this.currentUser = _.get(data, 'properties.reported.currentUser');
+        this.online = data.connectionState === 'Connected';
     }
 }
 
-module.exports.findConnectedBots = async () => {
-    const deviceData = await getReg().query('SELECT * FROM devices WHERE connectionState = \'Connected\'');
+module.exports.findBots = async params => {
+    const deviceData = await getReg().query(buildQuery(params));
     return deviceData.map(data => new Bot(data));
 };
+
+const buildQuery = params => {
+    const where = [];
+    if (params.online) {
+        where.push('connectionState = \'Connected\'');
+    }
+    let query = 'SELECT * FROM devices';
+    if (where.length) {
+        query += ' WHERE ' + where.join(' AND ');
+    }
+    return query;
+}

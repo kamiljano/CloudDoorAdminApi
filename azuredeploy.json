@@ -120,6 +120,9 @@
         ],
         "properties": {
           "siteConfig": {
+            "cors": {
+              "allowedOrigins": ["*"]
+            },
             "appSettings": [
                 {
                     "name": "AzureWebJobsStorage",

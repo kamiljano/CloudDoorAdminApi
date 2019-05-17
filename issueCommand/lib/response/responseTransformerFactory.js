@@ -7,9 +7,11 @@ const transformers = Object.freeze({
         transform: (req, resBody) => {
             const result = _.cloneDeep(resBody);
             result.uploads.forEach(upload => {
-                upload.storage = {
-                    path: `uploads/${req.params.id}/${upload.path.replace(/\\/g, '/')}`
-                };
+                if (upload.status === 'UPLOADED') {
+                    upload.storage = {
+                        path: `uploads/${req.params.id}/${upload.path.replace(/\\/g, '/')}`
+                    };
+                }
             });
             return result;
         }

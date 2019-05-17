@@ -142,7 +142,7 @@ npm install
 ## Development environment
 
 1. Create a resource group - `az group create --name CloudDoorDevResourceGroup --location northeurope`
-2. Deploy the resources - ` az group deployment create --resource-group CloudDoorDevResourceGroup --template-file "./azuredeploy.json" --parameters @azuredeploy-devparameters.json`
+2. Deploy the resources - `az group deployment create --resource-group CloudDoorDevResourceGroup --template-file "./azuredeploy.json" --parameters @azuredeploy-devparameters.json`
 
 ## Common
 

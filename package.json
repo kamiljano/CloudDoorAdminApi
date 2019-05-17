@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "func start",
+    "start": "func host start --cors *",
     "deployDev": "az group create --name CloudDoorDevResourceGroup --location northeurope && az group deployment create --resource-group CloudDoorDevResourceGroup --template-file \"./azuredeploy.json\" --properties \"@azuredeploy-devparameters.json\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
