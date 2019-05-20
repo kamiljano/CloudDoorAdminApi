@@ -123,7 +123,7 @@ npm install
 
 # Debug locally
 
-Once all resources are deployed, you can fetch the remote settings with `func azure functionapp fetch-app-settings CloudDoorDev`.
+Once all resources are deployed, you can fetch the remote settings with `func azure functionapp fetch-app-settings CloudDoorAdminDev`.
 This will pre-configure the `local.settings.json` with all the necessary data to hook your local instance to the remotely hosted IoT Hub and
 all other resources that are necessary for a smooth local run.
 

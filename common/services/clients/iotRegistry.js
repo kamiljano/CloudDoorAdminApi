@@ -2,20 +2,7 @@
 
 const iothub = require('azure-iothub');
 
-const generateConnectionString = (deviceInfo, hub) => {
-    return `HostName=${hub};SharedAccessKey=${deviceInfo.authentication.symmetricKey.primaryKey}`;
-};
-
 const singletonHolder = {};
-
-class IotDevice {
-
-    constructor({connectionString, deviceId}) {
-        this.connectionString = connectionString;
-        this.deviceId = deviceId;
-    }
-
-}
 
 class IotRegistry {
 
@@ -23,15 +10,15 @@ class IotRegistry {
         this._registry = iothub.Registry.fromConnectionString(connectionString);
     }
 
-    create(deviceId) {
-        return new Promise((resolve, reject) => {
-            this._registry.create({deviceId}, (err, deviceInfo) => {
-                err ? reject(err) : resolve(new IotDevice({
-                    connectionString: generateConnectionString(deviceInfo, this._registry._restApiClient._config.host),
-                    deviceId: deviceInfo.deviceId
-                }));
-            });
-        });
+    async get(deviceId) {
+        const [device, twin] = await Promise.all([
+            this._registry.get(deviceId),
+            this._registry.getTwin(deviceId)
+        ]);
+        return {
+            device: device.responseBody,
+            twin: twin.responseBody
+        };
     }
 
     /**
@@ -39,13 +26,9 @@ class IotRegistry {
      * @param {*} SQL query for a device 
      * @param {*} limit pageSize, max 100
      */
-    query(sql, limit = 100) {
-        return new Promise((resolve, reject) => {
-            const query = this._registry.createQuery(sql, limit);
-            query.nextAsTwin((err, results) => {
-                err ? reject(err) : resolve(results);
-            });
-        });
+    async query(sql, limit = 100) {
+        const query = this._registry.createQuery(sql, limit);
+        return (await query.nextAsTwin()).result;
     }
 };
 
