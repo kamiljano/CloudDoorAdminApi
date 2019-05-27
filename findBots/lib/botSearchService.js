@@ -13,6 +13,7 @@ class Bot {
         this.os = _.get(data, 'properties.reported.os');
         this.currentUser = _.get(data, 'properties.reported.currentUser');
         this.online = data.connectionState === 'Connected';
+        this.name = _.get(data, 'properties.reported.name');
     }
 }
 

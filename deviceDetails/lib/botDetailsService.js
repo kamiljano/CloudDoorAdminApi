@@ -26,6 +26,7 @@ class BotDetails {
         this.currentUser = _.get(data, 'twin.properties.reported.currentUser');
         this.online = _.get(data, 'twin.connectionState') === 'Connected';
         this.cpus = objectToArray(_.get(data, 'twin.properties.reported.specs.cpus'));
+        this.name = _.get(data, 'twin.properties.reported.name');
     }
 }
 
